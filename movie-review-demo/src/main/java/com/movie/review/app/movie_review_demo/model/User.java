@@ -1,40 +1,80 @@
 package com.movie.review.app.movie_review_demo.model;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import lombok.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-import java.util.List;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-
-@Data // Getter Setter, toString, EqualsAndHashCode, RequiredArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = "password")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank
-    @Size(min=4, max=20)
-    private String name;
+    @Size(max = 50)
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
 
-    @Email(message = "Email should be valid")
+    @NotBlank
+    @Email
+    @Size(max = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    private List<Review> reviews;
+    @NotBlank
+    @Size(min = 6)
+    @Column(nullable = false)
+    private String password;
 
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
+    @Size(max = 100)
+    @Column(name = "created_by", nullable = false, updatable = false, length = 100)
+    private String createdBy;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Size(max = 100)
+    @Column(name = "updated_by", length = 100)
+    private String updatedBy;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = this.createdAt;
+        // TODO: replace "system" with the currently authenticated user (e.g. from
+        // SecurityContext)
+        this.createdBy = "system";
+        this.updatedBy = this.createdBy;
     }
+
+    @PreUpdate
+    protected void onUpdateUser() {
+        // TODO: replace "system" with the currently authenticated user (e.g. from
+        // SecurityContext)
+        this.updatedBy = "system";
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // Note: store hashed passwords in production; do not expose plaintext
 }
