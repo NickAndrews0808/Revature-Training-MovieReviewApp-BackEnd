@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "password")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements Serializable {
 
@@ -38,6 +37,7 @@ public class User implements Serializable {
     @NotBlank
     @Size(min = 6)
     @Column(nullable = false)
+    @ToString.Exclude
     private String password;
 
     @Size(max = 100)
