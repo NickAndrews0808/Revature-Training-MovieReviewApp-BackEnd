@@ -14,25 +14,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
+     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // This is an API server: disable CSRF for simplicity (if you use cookies, re-evaluate)
-            .csrf(csrf -> csrf.disable())
-            // Allow framing for H2 console when used in development
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .csrf(csrf -> csrf.disable()) // Disable CSRF for testing (enable in production with proper setup)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/h2-console/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/auth/register", "/auth/login").permitAll() // Allow register & login
+                .anyRequest().authenticated() // Protect all other endpoints
             )
-            // Keep a simple default authentication for other endpoints (can be removed if you use JWT)
-            .httpBasic(Customizer.withDefaults());
-
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // For JWT/token-based auth
+            );
+        
         return http.build();
     }
-
-    @Bean
+    
+        @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
