@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/movies")
 public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
 
-    @PostMapping("path")
-    public String postMethodName(@RequestBody String entity) {
-        return entity;
+    @PostMapping("/{id}")
+    public Review upReview(@PathVariable Long id, @RequestBody Review review) {
+        return reviewService.updateReview(id, review);
     }
     
     public Review createReview(@RequestBody Review review) {
         return reviewService.createReview(review);
     }
 
-    @GetMapping
+    @GetMapping("/movie-list")
     public List<Review> getAllReviews() {
         return reviewService.getAllReviews();
     }
