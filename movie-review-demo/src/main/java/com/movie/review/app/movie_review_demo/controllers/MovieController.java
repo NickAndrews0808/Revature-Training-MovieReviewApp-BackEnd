@@ -16,7 +16,7 @@ import com.movie.review.app.movie_review_demo.model.Movie;
 import com.movie.review.app.movie_review_demo.service.MovieService;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/api/movies")
 public class MovieController {
     private final MovieService movieService;
     public MovieController(MovieService movieService) {
