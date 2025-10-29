@@ -35,8 +35,8 @@ public class User implements Serializable {
     private String email;
 
     @NotBlank
-    @Size(min = 6)
-    @Column(nullable = false)
+    // @Size(min = 6)
+    @Column(nullable = true) // Allow null for OAuth users
     @ToString.Exclude
     private String password;
 
@@ -64,14 +64,14 @@ public class User implements Serializable {
         this.updatedBy = this.createdBy;
     }
 
-    //@PreUpdate
+    // @PreUpdate
     protected void onUpdateUser() {
         // TODO: replace "system" with the currently authenticated user (e.g. from
         // SecurityContext)
         this.updatedBy = "system";
     }
 
-    //@PreUpdate
+    // @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
