@@ -3,6 +3,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Movie entity. Assumes a User entity exists in the same package with primary key field (e.g. id).
  */
@@ -39,8 +41,12 @@ public class Movie {
     @Column(name = "average_rating")
     private Double averageRating;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id", nullable = false)
+    @JsonIgnore
     private User createdBy;
 
     @Column(name = "created_on", nullable = false)
@@ -48,6 +54,7 @@ public class Movie {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by_id")
+    @JsonIgnore
     private User updatedBy;
 
     @Column(name = "updated_on")

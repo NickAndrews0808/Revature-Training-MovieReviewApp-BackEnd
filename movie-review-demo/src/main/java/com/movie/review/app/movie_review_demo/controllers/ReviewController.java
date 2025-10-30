@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/movies")
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
     @Autowired
