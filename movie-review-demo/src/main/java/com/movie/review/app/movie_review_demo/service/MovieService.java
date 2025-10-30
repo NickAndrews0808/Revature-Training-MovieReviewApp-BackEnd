@@ -36,6 +36,21 @@ public class MovieService {
         movie.setUpdatedBy(defaultUser); // optional
         return movieRepo.save(movie);
     }
+    private String convertToEmbedUrl(String url) {
+        if (url == null || url.isBlank()) return null;
+        if (url.contains("youtu.be/")) {
+            String videoId = url.split("youtu.be/")[1].split("\\?")[0];
+            return "https://www.youtube.com/embed/" + videoId;
+        } else if (url.contains("watch?v=")) {
+            String videoId = url.split("watch\\?v=")[1].split("&")[0];
+            return "https://www.youtube.com/embed/" + videoId;
+        } else if (url.contains("embed/")) {
+            return url; // already correct format
+        } else {
+            return url; // fallback
+        }
+    }
+
     public Movie updateMovie(Long id, Movie updatedMovie) {
         Movie existing = movieRepo.findById(id)
             .orElseThrow(() -> new RuntimeException("Movie not found"));
@@ -47,6 +62,7 @@ public class MovieService {
         existing.setDescription(updatedMovie.getDescription());
         existing.setAverageRating(updatedMovie.getAverageRating());
         existing.setImageUrl(updatedMovie.getImageUrl());
+        existing.setYtUrl(convertToEmbedUrl(updatedMovie.getYtUrl()));
 
         // Assign updatedBy user
         User defaultUser = userRepo.findById(1L).orElseThrow(() -> 
