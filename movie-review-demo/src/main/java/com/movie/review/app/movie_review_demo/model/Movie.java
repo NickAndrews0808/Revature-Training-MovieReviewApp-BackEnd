@@ -44,6 +44,9 @@ public class Movie {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "yt_url")
+    private String ytUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id", nullable = false)
     @JsonIgnore
