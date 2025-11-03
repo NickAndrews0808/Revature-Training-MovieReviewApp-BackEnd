@@ -64,17 +64,22 @@ public class User implements Serializable {
         this.updatedBy = this.createdBy;
     }
 
-    //@PreUpdate
+    // @PreUpdate
     protected void onUpdateUser() {
         // TODO: replace "system" with the currently authenticated user (e.g. from
         // SecurityContext)
         this.updatedBy = "system";
     }
 
-    //@PreUpdate
+    // @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
+    @Column(name = "access_token", length = 1000)
+    private String accessToken;
+
+    @Column(name = "refresh_token", length = 1000)
+    private String refreshToken;
     // Note: store hashed passwords in production; do not expose plaintext
 }
