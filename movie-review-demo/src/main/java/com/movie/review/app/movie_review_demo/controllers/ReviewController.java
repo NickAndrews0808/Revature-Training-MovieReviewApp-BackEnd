@@ -24,12 +24,8 @@ public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
-
-    @PostMapping("/{id}")
-    public Review upReview(@PathVariable Long id, @RequestBody Review review) {
-        return reviewService.updateReview(id, review);
-    }
     
+    @PostMapping
     public Review createReview(@RequestBody Review review) {
         return reviewService.createReview(review);
     }
@@ -59,3 +55,4 @@ public class ReviewController {
         reviewService.deleteReview(id);
     }
 }
+
