@@ -137,6 +137,7 @@ public class UserController {
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest updated) {
         User user = userService.updateUser(id, updated);
+        System.out.println("-------------user: "+user);
         if (user != null) {
             user.setPassword(null);
             user.getAccessToken();
