@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.movie.review.app.movie_review_demo.model.AuthResponse;
 import com.movie.review.app.movie_review_demo.model.LoginRequest;
 import com.movie.review.app.movie_review_demo.model.User;
+import com.movie.review.app.movie_review_demo.model.UserDetailsResponse;
+import com.movie.review.app.movie_review_demo.model.UserUpdateRequest;
 import com.movie.review.app.movie_review_demo.service.UserService;
 
 import jakarta.validation.Valid;
@@ -30,10 +32,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 
 public class UserController {
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -43,72 +45,80 @@ public class UserController {
             // Check if username already exists
             if (userService.findByUsername(user.getUsername()).isPresent()) {
                 return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Username already taken!");
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Username already taken!");
             }
-            
+
             if (userService.findByEmail(user.getEmail()).isPresent()) {
                 return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Email already registered!");
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Email already registered!");
             }
-            
+
             User createdUser = userService.createUser(user);
-            
+            UserDetailsResponse userDetails = new UserDetailsResponse(
+                    createdUser.getId(),
+                    createdUser.getEmail(),
+                    createdUser.getUsername());
             // Return token to frontend
             AuthResponse response = new AuthResponse(
-                createdUser.getAccessToken(),
-                "Account created successfully!"
-            );
-            
+                    createdUser.getAccessToken(),
+                    "Account created successfully!",
+                    userDetails);
+
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Registration failed: " + e.getMessage());
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Registration failed: " + e.getMessage());
         }
     }
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            
+
             Optional<User> userOpt = userService.findByEmail(loginRequest.getEmail());
-            
+
             if (userOpt.isEmpty()) {
                 return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid email or password");
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid email or password");
             }
-            
+
             User user = userOpt.get();
-            
+
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    user.getUsername(), // Spring Security uses username
-                    loginRequest.getPassword()
-                )
-            );
-            
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), // Spring Security uses username
+                            loginRequest.getPassword()
+                            )
+                        );
+
             User updatedUser = userService.updateUserTokens(user);
-            
+
+            UserDetailsResponse userDetails = new UserDetailsResponse(
+                    updatedUser.getId(),
+                    updatedUser.getEmail(),
+                    updatedUser.getUsername());
+
             AuthResponse response = new AuthResponse(
-                updatedUser.getAccessToken(),
-                "Login successful!"
-            );
-            
+                    updatedUser.getAccessToken(),
+                    "Login successful!",
+                    userDetails);
+
             return ResponseEntity.ok(response);
-            
+
         } catch (BadCredentialsException e) {
             return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body("Invalid email or password");
-                
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid email or password");
+
         } catch (Exception e) {
             return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Login failed: " + e.getMessage());
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Login failed: " + e.getMessage());
         }
     }
 
@@ -125,11 +135,11 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUser) {
-        User user = userService.updateUser(id, updatedUser);
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest updated) {
+        User user = userService.updateUser(id, updated);
         if (user != null) {
             user.setPassword(null);
-            user.setAccessToken(null);
+            user.getAccessToken();
             user.setRefreshToken(null);
             return ResponseEntity.ok(user);
         }

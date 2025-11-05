@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.movie.review.app.movie_review_demo.model.User;
+import com.movie.review.app.movie_review_demo.model.UserUpdateRequest;
 import com.movie.review.app.movie_review_demo.repo.UserRepo;
 import com.movie.review.app.movie_review_demo.security.JwtUtil;
 
@@ -64,11 +65,12 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User updateUser(Long id, User updatedUser) {
+    public User updateUser(Long id, UserUpdateRequest updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setUsername(updatedUser.getUsername());
             user.setEmail(updatedUser.getEmail());
-            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            updateUserTokens(user);
+            // user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));//for password update
             return userRepository.save(user);
         }).orElse(null);
     }
