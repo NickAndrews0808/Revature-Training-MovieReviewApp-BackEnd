@@ -40,19 +40,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(request -> {
-                var corsConfig = new CorsConfiguration();
-                // corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
-                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                corsConfig.setAllowedHeaders(List.of("*"));
-                corsConfig.setAllowCredentials(true);
-                corsConfig.setAllowedOriginPatterns(List.of("*"));
-                return corsConfig;
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOriginPatterns(List.of("*")); // allow all origins
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedHeaders(List.of("*"));
+                config.setAllowCredentials(true);
+                return config;
             }))
             
             .csrf(csrf -> csrf.disable())
             
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/create", "/auth/login").permitAll()
+                .requestMatchers("/users/create", "/auth/login", "/api/movies/**", "/api/reviews/**", "/error").permitAll()
                 
                 .anyRequest().authenticated()
             )

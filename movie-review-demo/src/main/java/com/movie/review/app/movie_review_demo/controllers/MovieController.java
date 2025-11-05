@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.movie.review.app.movie_review_demo.model.Movie;
 import com.movie.review.app.movie_review_demo.service.MovieService;
 
-@CrossOrigin(origins = "*")
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/movies")
 public class MovieController {
     private final MovieService movieService;
