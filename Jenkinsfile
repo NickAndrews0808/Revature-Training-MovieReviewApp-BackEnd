@@ -7,7 +7,7 @@ pipeline {
         AWS_REGION = 'us-east-2'
         DOCKER_IMAGE = 'spring-backend-07'
         EXTERNAL_PORT = '8087'
-        INTERNAL_PORT = '8080'
+        INTERNAL_PORT = '8087'
     }
     
     stages {
