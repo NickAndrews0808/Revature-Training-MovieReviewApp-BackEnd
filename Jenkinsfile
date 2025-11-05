@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         S3_BUCKET = 'trng2309-7'
-        SECRET_BUCKET = 'kyles-secret-bucket/team7/application.properties'
+        SECRET_BUCKET = 'kyles-secret-bucket'
         AWS_REGION = 'us-east-2'
         DOCKER_IMAGE = 'spring-backend-07'
         EXTERNAL_PORT = '8087'
